@@ -6,11 +6,11 @@ import spray.http._
 import spray.json._
 import MediaTypes._
 
+import spray.http.StatusCodes
 
 import ja.co.o3.dictionary.client._
 import ja.co.o3.dictionary.client.DictionaryClient._
 import ja.co.o3.dictionary.http._
-
 
 object DictionaryRoute {
 
@@ -25,8 +25,18 @@ class DictionaryRoute extends Actor with DictionaryRouteTrait {
   def dictionaryService = context.actorOf(DictionaryClient.props)
 }
 
+object DictionaryRouteTrait {
+  case class CreateTermRequest(label:String, synonyms:Option[Set[String]])
+
+  object DictionaryRouteProtocol extends DefaultJsonProtocol {
+    implicit val createTermRequestFormat = jsonFormat2(CreateTermRequest)
+  }
+}
 // DictionaryRouteTrait to define the route
 trait DictionaryRouteTrait extends HttpService with Actor with DictionaryRequestDelegator {
+  import ja.co.o3.dictionary.client.DictionaryJsonProtocol._
+  import ja.co.o3.dictionary.route.DictionaryRouteTrait._
+  import ja.co.o3.dictionary.route.DictionaryRouteTrait.DictionaryRouteProtocol._
 
   def dictionaryService : ActorRef 
 
@@ -34,8 +44,13 @@ trait DictionaryRouteTrait extends HttpService with Actor with DictionaryRequest
     pathPrefix("dic" ~ Segment) { dicName => 
       pathEnd {
         get {
-          // get specified dictionary status
-          ctx => delegateDictionaryRequest(ctx, dictionaryService, GetDictionary(dicName))
+          parameters('label.? ) { label => 
+            // get specified dictionary status
+            if(None != label)
+              ctx => delegateDictionaryRequest(ctx, dictionaryService, GetTermByLabel(dicName, label.get))
+            else
+              ctx => delegateDictionaryRequest(ctx, dictionaryService, GetDictionary(dicName))
+          }
         } ~
         put {
           ctx => delegateDictionaryRequest(ctx, dictionaryService, CreateDictionary(dicName))
@@ -46,15 +61,16 @@ trait DictionaryRouteTrait extends HttpService with Actor with DictionaryRequest
       } ~
       path( Segment ) { termName =>
         get {
-          respondWithMediaType(`application/json`) {
-            complete {
-              """
-              {
-                "message": "term"
-              }
-              """
-            }
+          // get specified dictionary status
+          ctx => delegateDictionaryRequest(ctx, dictionaryService, GetTerm(dicName, termName))
+        } ~
+        put {
+          entity (as[CreateTermRequest]) { term => 
+            ctx => delegateDictionaryRequest(ctx, dictionaryService, CreateTerm(dicName, termName, term.label, term.synonyms.getOrElse(Set())))
           }
+        } ~
+        delete {
+          ctx => delegateDictionaryRequest(ctx, dictionaryService, DeleteTerm(dicName, termName))
         }
       }
     }
