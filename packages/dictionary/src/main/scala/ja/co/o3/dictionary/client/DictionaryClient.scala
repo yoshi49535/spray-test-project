@@ -17,7 +17,6 @@ object DictionaryJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport 
 }
 
 object DictionaryClient {
-  def props:Props = Props(new DictionaryClient())
   // Dictionary Request
   case class GetDictionary(dicName: String) extends DictionaryMessage
   case class CreateDictionary(dicName: String) extends DictionaryMessage
@@ -37,33 +36,33 @@ object DictionaryClient {
   case class TermRef(dicName: String, termName: String) extends DictionaryMessage
 }
 
-class DictionaryClient extends Actor {
-  def receive = {
-    case GetDictionary(dicName) => {
-      // fetch (synchronously)
-      sender ! DictionaryStat(dicName, 0)
-    }
-    case CreateDictionary(dicName) => {
-      // create (asynchronously)
-      sender ! DictionaryRef(dicName)
-    }
-    case DeleteDictionary(dicName) => {
-      sender ! DictionaryRef(dicName)
-    }
-
-    case GetTerm(dicName, termName) => {
-      sender ! Term(dicName, termName, "Hoge")
-    }
-    case GetTermByLabel(dicName, label) => {
-      sender ! Term(dicName, "hoge", label)
-    }
-    case CreateTerm(dicName, termName, label, synonyms) => {
-      sender ! Term(dicName, termName, label, synonyms)
-    }
-    case DeleteTerm(dicName, termName) => {
-      sender ! TermRef(dicName, termName)
-    }
-  }
+abstract class DictionaryClient extends Actor {
+//  def receive = {
+//    case GetDictionary(dicName) => {
+//      // fetch (synchronously)
+//      sender ! DictionaryStat(dicName, 0)
+//    }
+//    case CreateDictionary(dicName) => {
+//      // create (asynchronously)
+//      sender ! DictionaryRef(dicName)
+//    }
+//    case DeleteDictionary(dicName) => {
+//      sender ! DictionaryRef(dicName)
+//    }
+//
+//    case GetTerm(dicName, termName) => {
+//      sender ! Term(dicName, termName, "Hoge")
+//    }
+//    case GetTermByLabel(dicName, label) => {
+//      sender ! Term(dicName, "hoge", label)
+//    }
+//    case CreateTerm(dicName, termName, label, synonyms) => {
+//      sender ! Term(dicName, termName, label, synonyms)
+//    }
+//    case DeleteTerm(dicName, termName) => {
+//      sender ! TermRef(dicName, termName)
+//    }
+//  }
 }
 
 trait DictionaryMessage {}

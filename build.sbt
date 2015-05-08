@@ -1,25 +1,54 @@
-organization  := "com.example"
+lazy val commonSettings = Seq(
+  organization := "jp.co.o3",
+  version := "0.1.0",
+  scalaVersion := "2.10.5",
+  scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+)
 
-version       := "0.1"
 
-scalaVersion  := "2.10.5"
+lazy val scalaCanSetting = commonSettings ++ {
+    libraryDependencies ++= {
+      val akkaV = "2.3.9"
+      val sprayV = "1.3.3"
+      Seq(
+        "io.spray"            %%  "spray-can"     % sprayV,
+        "io.spray"            %%  "spray-routing" % sprayV,
+        "io.spray"            %%  "spray-testkit" % sprayV  % "test",
+        "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
+        "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
+        "org.specs2"          %%  "specs2-core"   % "2.3.7" % "test",
+        "org.json4s"          %%  "json4s-native" % "3.2.4",
+        "io.spray"            %%  "spray-json"    % "1.3.1",
+        "com.github.mauricio" %%  "mysql-async"   % "0.2.15"
+      )
+    }
+  }
 
-scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
-libraryDependencies ++= {
-  val akkaV = "2.3.9"
-  val sprayV = "1.3.3"
-  Seq(
-    "io.spray"            %%  "spray-can"     % sprayV,
-    "io.spray"            %%  "spray-routing" % sprayV,
-    "io.spray"            %%  "spray-testkit" % sprayV  % "test",
-    "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
-    "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
-    "org.specs2"          %%  "specs2-core"   % "2.3.7" % "test",
-    "org.json4s" %% "json4s-native" % "3.2.4"
+// Include all projects to test and debug
+lazy val root = (project in file(".")).
+  settings(scalaCanSetting: _*).
+  settings(
+    name := "root"
+  ).
+  dependsOn(core, dictionary)
+
+
+// core pacakge 
+lazy val core = (project in file("packages/core")).
+  settings(commonSettings: _*).
+  settings(
+    name := "core"
   )
-}
 
-libraryDependencies += "io.spray" %%  "spray-json" % "1.3.1"
 
+lazy val dictionary = (project in file("packages/dictionary")).
+  settings(scalaCanSetting: _*).
+  settings(
+    name := "dictionary"
+  ).
+  dependsOn(core)
+
+
+// revolver for "root" project
 Revolver.settings

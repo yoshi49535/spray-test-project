@@ -9,20 +9,18 @@ import MediaTypes._
 import spray.http.StatusCodes
 
 import ja.co.o3.dictionary.client._
+import ja.co.o3.dictionary.client.DictionaryClient
 import ja.co.o3.dictionary.client.DictionaryClient._
 import ja.co.o3.dictionary.http._
 
 object DictionaryRoute {
-
-  def props: Props = Props(new DictionaryRoute())
-
+  def props(dictionaryService:ActorRef): Props = Props(new DictionaryRoute(dictionaryService))
 }
 
-class DictionaryRoute extends Actor with DictionaryRouteTrait {
+class DictionaryRoute(var dictionaryService:ActorRef) extends Actor with DictionaryRouteTrait {
   implicit def actorRefFactory = context
-  def receive = runRoute(dictionaryRoute)
 
-  def dictionaryService = context.actorOf(DictionaryClient.props)
+  def receive = runRoute(dictionaryRoute)
 }
 
 object DictionaryRouteTrait {
@@ -38,7 +36,7 @@ trait DictionaryRouteTrait extends HttpService with Actor with DictionaryRequest
   import ja.co.o3.dictionary.route.DictionaryRouteTrait._
   import ja.co.o3.dictionary.route.DictionaryRouteTrait.DictionaryRouteProtocol._
 
-  def dictionaryService : ActorRef 
+  var dictionaryService : ActorRef 
 
   val dictionaryRoute = 
     pathPrefix("dic" ~ Segment) { dicName => 
