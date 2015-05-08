@@ -1,7 +1,7 @@
 lazy val commonSettings = Seq(
   organization := "jp.co.o3",
-  version := "0.1.0",
   scalaVersion := "2.10.5",
+  version := "0.1.0",
   scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 )
 
@@ -31,21 +31,21 @@ lazy val root = (project in file(".")).
   settings(
     name := "root"
   ).
-  dependsOn(core, dictionary)
+  dependsOn(core, dictionaryService)
 
 
-// core pacakge 
-lazy val core = (project in file("packages/core")).
+// libs/core pacakge 
+lazy val core = (project in file("libs/core")).
   settings(commonSettings: _*).
   settings(
     name := "core"
   )
 
 
-lazy val dictionary = (project in file("packages/dictionary")).
+lazy val dictionaryService = (project in file("services/dictionary")).
   settings(scalaCanSetting: _*).
   settings(
-    name := "dictionary"
+    name := "Dictionary Service"
   ).
   dependsOn(core)
 

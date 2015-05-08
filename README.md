@@ -1,5 +1,17 @@
 
 
+ディレクトリ構成
+----------------
+
+```
+./
+    services/
+        dictionary/ : Dictionaryサービスのコード
+    libs/
+        core        : coreライブラリのコード
+    src/            : rootプロジェクトのコード
+```
+
 Compile
 -------
 
@@ -10,7 +22,7 @@ sbt
 compile
 
 # service/dictionary(および依存パッケージ)のみをコンパイルする
-project dictionary
+project dictionaryService
 compile
 ```
 
@@ -21,16 +33,23 @@ serviceを起動させる
 sbt
 
 # 全サービスルーティングを含んだサーバを起動させる
-project dictionary
 re-start
 ...
 re-stop
 
 # service/dictionaryのサーバのみを起動させる
-project dictionary
+project dictionaryService
 re-start
 ...
 re-stop
 ````
 
+補足
+--------
 
+インタラクティブではなく、コンソールで実行したいばあいは、
+
+```
+sbt "project dictionaryService" compile
+```
+などのように、project指定可能
