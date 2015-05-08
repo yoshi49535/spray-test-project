@@ -1,7 +1,7 @@
-package ja.co.o3.dictionary.client
+package jp.co.o3.dictionary.client
 
 import akka.actor.{Actor, Props}
-import ja.co.o3.dictionary.client.DictionaryClient._
+import jp.co.o3.dictionary.client.DictionaryClient._
 
 import spray.json._
 import spray.httpx.SprayJsonSupport

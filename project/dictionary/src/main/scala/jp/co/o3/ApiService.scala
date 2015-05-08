@@ -1,12 +1,12 @@
-package ja.co.o3
+package jp.co.o3
 
 import akka.actor.{Actor, Props, ActorRef}
 import spray.routing._
 import spray.http._
 import MediaTypes._
 
-import ja.co.o3.dictionary.route.DictionaryRouteTrait
-import ja.co.o3.dictionary.client.DictionaryClient
+import jp.co.o3.dictionary.route.DictionaryRouteTrait
+import jp.co.o3.dictionary.client.DictionaryClient
 
 object ApiServiceActor {
   def props(dictionaryService:ActorRef) = Props(new ApiServiceActor(dictionaryService)) 

@@ -1,4 +1,4 @@
-package ja.co.o3.dictionary.route
+package jp.co.o3.dictionary.route
 
 import akka.actor._
 import spray.routing._
@@ -8,10 +8,10 @@ import MediaTypes._
 
 import spray.http.StatusCodes
 
-import ja.co.o3.dictionary.client._
-import ja.co.o3.dictionary.client.DictionaryClient
-import ja.co.o3.dictionary.client.DictionaryClient._
-import ja.co.o3.dictionary.http._
+import jp.co.o3.dictionary.client._
+import jp.co.o3.dictionary.client.DictionaryClient
+import jp.co.o3.dictionary.client.DictionaryClient._
+import jp.co.o3.dictionary.http._
 
 object DictionaryRoute {
   def props(dictionaryService:ActorRef): Props = Props(new DictionaryRoute(dictionaryService))
@@ -32,9 +32,9 @@ object DictionaryRouteTrait {
 }
 // DictionaryRouteTrait to define the route
 trait DictionaryRouteTrait extends HttpService with Actor with DictionaryRequestDelegator {
-  import ja.co.o3.dictionary.client.DictionaryJsonProtocol._
-  import ja.co.o3.dictionary.route.DictionaryRouteTrait._
-  import ja.co.o3.dictionary.route.DictionaryRouteTrait.DictionaryRouteProtocol._
+  import jp.co.o3.dictionary.client.DictionaryJsonProtocol._
+  import jp.co.o3.dictionary.route.DictionaryRouteTrait._
+  import jp.co.o3.dictionary.route.DictionaryRouteTrait.DictionaryRouteProtocol._
 
   var dictionaryService : ActorRef 
 

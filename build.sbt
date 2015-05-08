@@ -1,3 +1,5 @@
+lazy val typesafeConfig = "com.typesafe" % "config" % "1.2.1"
+
 lazy val commonSettings = Seq(
   organization := "jp.co.o3",
   scalaVersion := "2.10.5",
@@ -38,7 +40,8 @@ lazy val root = (project in file(".")).
 lazy val core = (project in file("libs/core")).
   settings(commonSettings: _*).
   settings(
-    name := "core"
+    name := "core",
+    libraryDependencies += typesafeConfig
   )
 
 

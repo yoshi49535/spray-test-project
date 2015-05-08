@@ -1,8 +1,8 @@
-package ja.co.o3.dictionary.client.mysql
+package jp.co.o3.dictionary.client.mysql
 
 import akka.actor.{Actor, Props}
-import ja.co.o3.dictionary.client.DictionaryClient
-import ja.co.o3.dictionary.client.DictionaryClient._
+import jp.co.o3.dictionary.client.DictionaryClient
+import jp.co.o3.dictionary.client.DictionaryClient._
 
 import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
 
