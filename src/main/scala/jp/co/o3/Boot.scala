@@ -1,4 +1,4 @@
-package ja.co.o3
+package jp.co.o3
 
 import akka.actor.{ActorSystem, Props}
 import akka.io.IO
@@ -8,10 +8,10 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 
 import com.typesafe.config._
-import ja.co.o3.dictionary.client.mysql.MySqlDictionaryClientImpl
+import jp.co.o3.dictionary.client.mysql.MySqlDictionaryClientImpl
 
-import ja.co.o3.core.util.Helpers._
-import ja.co.o3.dictionary.util.Helpers._
+import jp.co.o3.core.util.Helpers._
+import jp.co.o3.dictionary.util.Helpers._
 
 object Boot extends App {
 

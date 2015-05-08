@@ -1,11 +1,11 @@
-package ja.co.o3.dictionary.http
+package jp.co.o3.dictionary.http
 
 import akka.actor._
 import spray.routing._
 import spray.http._
 import spray.http.StatusCode
 import spray.http.StatusCodes._
-import ja.co.o3.dictionary.client._
+import jp.co.o3.dictionary.client._
 // json
 import spray.httpx.Json4sSupport
 import org.json4s.DefaultFormats

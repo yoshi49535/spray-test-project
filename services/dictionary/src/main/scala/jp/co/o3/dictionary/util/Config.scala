@@ -1,4 +1,4 @@
-package ja.co.o3.dictionary.util
+package jp.co.o3.dictionary.util
 
 import com.typesafe.config.{ConfigFactory, Config => ConfigFile}
 
