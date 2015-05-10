@@ -9,32 +9,32 @@ import MediaTypes._
 import spray.http.StatusCodes
 
 import jp.co.o3.dictionary.client._
-import jp.co.o3.dictionary.client.DictionaryClient
-import jp.co.o3.dictionary.client.DictionaryClient._
+import jp.co.o3.dictionary.DictionaryService
+import jp.co.o3.dictionary.DictionaryService._
 import jp.co.o3.dictionary.http._
 
-object DictionaryRoute {
-  def props(dictionaryService:ActorRef): Props = Props(new DictionaryRoute(dictionaryService))
+object ServiceRoute {
+  def props(dictionaryService:ActorRef): Props = Props(new ServiceRoute(dictionaryService))
 }
 
-class DictionaryRoute(var dictionaryService:ActorRef) extends Actor with DictionaryRouteTrait {
+class ServiceRoute(var dictionaryService:ActorRef) extends Actor with ServiceRouteTrait {
   implicit def actorRefFactory = context
 
   def receive = runRoute(dictionaryRoute)
 }
 
-object DictionaryRouteTrait {
+object ServiceRouteTrait {
   case class CreateTermRequest(label:String, synonyms:Option[Set[String]])
 
-  object DictionaryRouteProtocol extends DefaultJsonProtocol {
+  object ServiceRouteProtocol extends DefaultJsonProtocol {
     implicit val createTermRequestFormat = jsonFormat2(CreateTermRequest)
   }
 }
 // DictionaryRouteTrait to define the route
-trait DictionaryRouteTrait extends HttpService with Actor with DictionaryRequestDelegator {
-  import jp.co.o3.dictionary.client.DictionaryJsonProtocol._
-  import jp.co.o3.dictionary.route.DictionaryRouteTrait._
-  import jp.co.o3.dictionary.route.DictionaryRouteTrait.DictionaryRouteProtocol._
+trait ServiceRouteTrait extends HttpService with Actor with DictionaryRequestDelegator {
+  import jp.co.o3.dictionary.DictionaryService.DictionaryJsonProtocol._
+  import jp.co.o3.dictionary.route.ServiceRouteTrait._
+  import jp.co.o3.dictionary.route.ServiceRouteTrait.ServiceRouteProtocol._
 
   var dictionaryService : ActorRef 
 

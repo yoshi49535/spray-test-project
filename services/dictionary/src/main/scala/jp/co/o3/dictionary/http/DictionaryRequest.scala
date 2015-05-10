@@ -5,7 +5,7 @@ import spray.routing._
 import spray.http._
 import spray.http.StatusCode
 import spray.http.StatusCodes._
-import jp.co.o3.dictionary.client._
+import jp.co.o3.dictionary.DictionaryService.Message
 // json
 import spray.httpx.Json4sSupport
 import org.json4s.DefaultFormats
@@ -14,9 +14,11 @@ import scala.concurrent.duration._
 import akka.actor.SupervisorStrategy.Stop
 import akka.actor.OneForOneStrategy
 
+
+
 object DictionaryRequest {
-  case class WithActorRef(r: RequestContext, target: ActorRef, message: DictionaryMessage) extends DictionaryRequest 
-  case class WithProps(r: RequestContext, props: Props, message: DictionaryMessage) extends DictionaryRequest {
+  case class WithActorRef(r: RequestContext, target: ActorRef, message: Message) extends DictionaryRequest 
+  case class WithProps(r: RequestContext, props: Props, message: Message) extends DictionaryRequest {
     lazy val target = context.actorOf(props)
   }
 }
@@ -30,14 +32,14 @@ trait DictionaryRequest extends Actor with Json4sSupport {
 
   def r: RequestContext
   def target: ActorRef
-  def message: DictionaryMessage
+  def message: Message
 
   setReceiveTimeout(2.seconds)
   target ! message
 
   def receive = {
     // Complete the client task
-    case res:DictionaryMessage => complete(OK, res)
+    case res:Message => complete(OK, res)
     // Asych task is executed.
     //case t:Task => complete(REDIRECT, t)
     //case v: Validation => complete(BadRequest, v)
@@ -64,11 +66,11 @@ trait DictionaryRequestDelegator {
   this: Actor => 
 
   // send message to the serviceClient with requester
-  def delegateDictionaryRequest(r: RequestContext, target: ActorRef, message: DictionaryMessage) = {
+  def delegateDictionaryRequest(r: RequestContext, target: ActorRef, message: Message) = {
     context.actorOf(Props(new DictionaryRequest.WithActorRef(r, target, message)))
   }
 
-  def delegateDictionaryRequest(r: RequestContext, props: Props, message: DictionaryMessage) = {
+  def delegateDictionaryRequest(r: RequestContext, props: Props, message: Message) = {
     context.actorOf(Props(new DictionaryRequest.WithProps(r, props, message)))
   }
 }

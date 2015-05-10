@@ -1,8 +1,8 @@
 package jp.co.o3.dictionary.client.mysql
 
 import akka.actor.{Actor, Props}
-import jp.co.o3.dictionary.client.DictionaryClient
-import jp.co.o3.dictionary.client.DictionaryClient._
+import jp.co.o3.dictionary.DictionaryService
+import jp.co.o3.dictionary.DictionaryService._
 
 import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
 
@@ -13,13 +13,19 @@ object MySqlDictionaryClientImpl {
   }
 }
 
-// MySqlDictionaryClientImpl
-//class MySqlDictionaryClientImpl (val connection:Connection) extends DictionaryClient {
-class MySqlDictionaryClientImpl extends DictionaryClient {
+/*
+ *  Client implementation for MySQL
+ */
+class MySqlDictionaryClientImpl extends DictionaryService with Actor {
 
   def receive = {
     case GetDictionary(dicName) => {
       // fetch (synchronously)
+      /*
+      dictionary = connection.getByDictionaryName(dicName)
+
+      sender ! DictionaryStat(dictionary.name, dictionary.count)
+       */
       sender ! DictionaryStat(dicName, 0)
     }
     case CreateDictionary(dicName) => {

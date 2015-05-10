@@ -5,8 +5,7 @@ import spray.routing._
 import spray.http._
 import MediaTypes._
 
-import jp.co.o3.dictionary.route.DictionaryRouteTrait
-import jp.co.o3.dictionary.client.DictionaryClient
+import jp.co.o3.dictionary.route.ServiceRouteTrait
 
 object ApiServiceActor {
   def props(dictionaryService:ActorRef) = Props(new ApiServiceActor(dictionaryService)) 
@@ -25,7 +24,7 @@ class ApiServiceActor(var dictionaryService:ActorRef) extends Actor with ApiServ
   def receive = runRoute(route)
 }
 
-trait ApiService extends HttpService with DictionaryRouteTrait {
+trait ApiService extends HttpService with ServiceRouteTrait {
   val route =
     pathPrefix("") {
       pathEnd {
