@@ -43,6 +43,8 @@ class DictionaryConfig(var config: ConfigFile) {
     lazy val dbPassword = config.getString("db.password") 
 
     lazy val dbName     = config.getString("db.name")
+
+    lazy val jdbcPath = dbHost + ":" + dbPort + "/" + dbName
 }
 
 

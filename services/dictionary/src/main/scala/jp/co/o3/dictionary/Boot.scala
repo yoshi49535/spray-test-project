@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 
 import com.typesafe.config._
 import jp.co.o3.dictionary.util.Helpers._
-import jp.co.o3.dictionary.client.mysql.MySqlDictionaryClientImpl
+import jp.co.o3.dictionary.client.MySQLDictionaryClientImpl
 
 object Boot extends App {
 
@@ -26,7 +26,7 @@ object Boot extends App {
   val srvrConf = conf.getConfig("server")
 
   // Create Actor of the serviceClient
-  val dictionaryService = system.actorOf(MySqlDictionaryClientImpl.props(dicConf.dbHost, dicConf.dbPort, dicConf.dbUsername, dicConf.dbPassword))
+  val dictionaryService = system.actorOf(MySQLDictionaryClientImpl.props(dicConf.jdbcPath, dicConf.dbUsername, dicConf.dbPassword))
 
   // create and start our service actor
   val service = system.actorOf(ApiServiceActor.props(dictionaryService), "dictionary-service")
