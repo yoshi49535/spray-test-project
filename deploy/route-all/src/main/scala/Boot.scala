@@ -1,4 +1,4 @@
-package jp.co.o3
+package app
 
 import akka.actor.{ActorSystem, Props}
 import akka.io.IO
@@ -8,7 +8,7 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 
 import com.typesafe.config._
-import jp.co.o3.dictionary.client.mysql.MySqlDictionaryClientImpl
+import jp.co.o3.dictionary.client.MySQLDictionaryClientImpl
 
 import jp.co.o3.core.util.Helpers._
 import jp.co.o3.dictionary.util.Helpers._
@@ -28,10 +28,10 @@ object Boot extends App {
   val srvrConf = conf.server
 
   // Create Actor of the serviceClient
-  val dictionaryService = system.actorOf(MySqlDictionaryClientImpl.props(dicConf.dbHost, dicConf.dbPort, dicConf.dbUsername, dicConf.dbPassword))
+  val dictionaryService = system.actorOf(MySQLDictionaryClientImpl.props(dicConf.jdbcPath, dicConf.dbUsername, dicConf.dbPassword))
 
   // create and start our service actor
-  val service = system.actorOf(ApiServiceActor.props(dictionaryService), "root-service")
+  val service = system.actorOf(ApiServiceActor.props(dictionaryService), "route-all-service")
 
   implicit val timeout = Timeout(srvrConf.timeout.seconds)
   // start a new HTTP server on port 8080 with our service actor as the handler

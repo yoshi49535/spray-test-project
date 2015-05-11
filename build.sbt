@@ -10,12 +10,12 @@ lazy val commonSettings = Seq(
   scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
 )
 
-
 lazy val consoleSetting = commonSettings ++ {
     libraryDependencies += typesafeConfig
     libraryDependencies += mysql
     libraryDependencies += slick
   }
+
 lazy val scalaCanSetting = commonSettings ++ {
     libraryDependencies ++= {
       val akkaV = "2.3.9"
@@ -39,20 +39,23 @@ lazy val scalaCanSetting = commonSettings ++ {
     }
   }
 
-lazy val all = (project in file(".")).
+
+lazy val root = (project in file(".")).
   aggregate(core, dictionaryService).
   settings(
-    name := "all",
+    name := "root",
     aggregate in update := false
   )
 
+
 // Include all projects to test and debug
-lazy val root = (project in file(".")).
+lazy val deployRouteAll = Project("deploy-route-all", file("deploy/route-all")).
   settings(scalaCanSetting: _*).
   settings(
-    name := "root"
+    name := "deploy-route-all"
   ).
   dependsOn(core, dictionaryService)
+
 
 lazy val migrateTool = Project("migration-tool", file("tools/migrate")).
   settings(consoleSetting: _*).

@@ -1,12 +1,12 @@
-package jp.co.o3
+package app 
 
 import akka.actor.{Actor, Props, ActorRef}
 import spray.routing._
 import spray.http._
 import MediaTypes._
 
-import jp.co.o3.dictionary.route.DictionaryRouteTrait
-import jp.co.o3.dictionary.client.DictionaryClient
+import jp.co.o3.dictionary.route.ServiceRouteTrait
+import jp.co.o3.dictionary.DictionaryService
 
 object ApiServiceActor {
   def props(dictionaryService:ActorRef) = Props(new ApiServiceActor(dictionaryService)) 
@@ -26,7 +26,7 @@ class ApiServiceActor(var dictionaryService:ActorRef) extends Actor with ApiServ
 }
 
 trait ApiService extends HttpService 
-  with DictionaryRouteTrait 
+  with ServiceRouteTrait 
 {
   val route =
     pathPrefix("") {
@@ -47,3 +47,4 @@ trait ApiService extends HttpService
     } ~
     dictionaryRoute
 }
+
