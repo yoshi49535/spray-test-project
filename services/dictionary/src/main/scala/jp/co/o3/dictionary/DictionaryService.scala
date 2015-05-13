@@ -2,6 +2,7 @@ package jp.co.o3.dictionary
 
 import spray.json._
 import spray.httpx.SprayJsonSupport
+import jp.co.o3.core.http.Message
 
 object DictionaryService {
 
@@ -14,8 +15,6 @@ object DictionaryService {
   
     implicit val CreateTermFormat = jsonFormat4(CreateTerm)
   }
-
-  trait Message {}
 
   // Dictionary Request
   case class GetDictionary(dicName: String) extends Message

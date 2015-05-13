@@ -11,7 +11,9 @@ import spray.http.StatusCodes
 import jp.co.o3.dictionary.client._
 import jp.co.o3.dictionary.DictionaryService
 import jp.co.o3.dictionary.DictionaryService._
-import jp.co.o3.dictionary.http._
+
+import jp.co.o3.core.http.RequestDelegator
+import jp.co.o3.core.task.http.{RequestDelegator => TaskRequestDelegator}
 
 object ServiceRoute {
   def props(dictionaryService:ActorRef): Props = Props(new ServiceRoute(dictionaryService))
@@ -21,6 +23,8 @@ class ServiceRoute(var dictionaryService:ActorRef) extends Actor with ServiceRou
   implicit def actorRefFactory = context
 
   def receive = runRoute(dictionaryRoute)
+
+  //implicit val taskManager:Option[ActorRef] = actorOf()
 }
 
 object ServiceRouteTrait {
@@ -31,7 +35,7 @@ object ServiceRouteTrait {
   }
 }
 // DictionaryRouteTrait to define the route
-trait ServiceRouteTrait extends HttpService with Actor with DictionaryRequestDelegator {
+trait ServiceRouteTrait extends HttpService with Actor with TaskRequestDelegator {
   import jp.co.o3.dictionary.DictionaryService.DictionaryJsonProtocol._
   import jp.co.o3.dictionary.route.ServiceRouteTrait._
   import jp.co.o3.dictionary.route.ServiceRouteTrait.ServiceRouteProtocol._
@@ -45,30 +49,30 @@ trait ServiceRouteTrait extends HttpService with Actor with DictionaryRequestDel
           parameters('label.? ) { label => 
             // get specified dictionary status
             if(None != label)
-              ctx => delegateDictionaryRequest(ctx, dictionaryService, GetTermByLabel(dicName, label.get))
+              ctx => delegateAsyncRequest(ctx, dictionaryService, GetTermByLabel(dicName, label.get))
             else
-              ctx => delegateDictionaryRequest(ctx, dictionaryService, GetDictionary(dicName))
+              ctx => delegateAsyncRequest(ctx, dictionaryService, GetDictionary(dicName))
           }
         } ~
         put {
-          ctx => delegateDictionaryRequest(ctx, dictionaryService, CreateDictionary(dicName))
+          ctx => delegateAsyncRequest(ctx, dictionaryService, CreateDictionary(dicName))
         } ~
         delete {
-          ctx => delegateDictionaryRequest(ctx, dictionaryService, DeleteDictionary(dicName))
+          ctx => delegateAsyncRequest(ctx, dictionaryService, DeleteDictionary(dicName))
         }
       } ~
       path( Segment ) { termName =>
         get {
           // get specified dictionary status
-          ctx => delegateDictionaryRequest(ctx, dictionaryService, GetTerm(dicName, termName))
+          ctx => delegateAsyncRequest(ctx, dictionaryService, GetTerm(dicName, termName))
         } ~
         put {
           entity (as[CreateTermRequest]) { term => 
-            ctx => delegateDictionaryRequest(ctx, dictionaryService, CreateTerm(dicName, termName, term.label, term.synonyms.getOrElse(Set())))
+            ctx => delegateAsyncRequest(ctx, dictionaryService, CreateTerm(dicName, termName, term.label, term.synonyms.getOrElse(Set())))
           }
         } ~
         delete {
-          ctx => delegateDictionaryRequest(ctx, dictionaryService, DeleteTerm(dicName, termName))
+          ctx => delegateAsyncRequest(ctx, dictionaryService, DeleteTerm(dicName, termName))
         }
       }
     }

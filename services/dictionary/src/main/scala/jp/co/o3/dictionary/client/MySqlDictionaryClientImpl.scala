@@ -1,5 +1,7 @@
 package jp.co.o3.dictionary.client
 
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.{Actor, Props}
 import jp.co.o3.dictionary.DictionaryService
 import jp.co.o3.dictionary.DictionaryService._
@@ -11,6 +13,7 @@ import slick.jdbc.JdbcBackend.Database
 import javax.sql.DataSource
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import jp.co.o3.dictionary.client.dal.DictionaryDAL
+import jp.co.o3.dictionary.client.MySQLDictionaryClientImpl._
 
 /** 
  * Compinion Object of MySQLDictionaryClientImpl
@@ -32,13 +35,16 @@ object MySQLDictionaryClientImpl {
   def props(datasource:DataSource) : Props = {
     Props(new MySQLDictionaryClientImpl(Database.forDataSource(datasource)))
   }
+
+  case class CreateDatabase()
+  case class DropDatabase()
+  case class PurgeDatabase()
 }
 
 /*
  *  Client implementation for MySQL
  */
 class MySQLDictionaryClientImpl (val database:Database) extends DictionaryService with Actor {
-
   // DAL with Slick MySQLDriver 
   val dal = new DictionaryDAL(MySQLDriver)
 
@@ -73,7 +79,11 @@ class MySQLDictionaryClientImpl (val database:Database) extends DictionaryServic
     }
     case CreateDictionary(dicName) => {
       // create (asynchronously)
-      sender ! DictionaryRef(dicName)
+      val res:Future[DictionaryRef] = future {
+        //Thread.sleep(100)
+        DictionaryRef(dicName)
+      }
+      sender ! res
     }
     case DeleteDictionary(dicName) => {
       sender ! DictionaryRef(dicName)
@@ -90,6 +100,16 @@ class MySQLDictionaryClientImpl (val database:Database) extends DictionaryServic
     }
     case DeleteTerm(dicName, termName) => {
       sender ! TermRef(dicName, termName)
+    }
+
+    case CreateDatabase => {
+      createDB
+    }
+    case DropDatabase => {
+      createDB
+    }
+    case PurgeDatabase => {
+      purgeDB
     }
   }
 }

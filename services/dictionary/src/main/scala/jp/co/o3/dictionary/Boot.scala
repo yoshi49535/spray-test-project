@@ -28,6 +28,8 @@ object Boot extends App {
   // Create Actor of the serviceClient
   val dictionaryService = system.actorOf(MySQLDictionaryClientImpl.props(dicConf.jdbcPath, dicConf.dbUsername, dicConf.dbPassword))
 
+  //implicit val taskManager = system.actorOf(TaskManager.props("/tasks"))
+
   // create and start our service actor
   val service = system.actorOf(ApiServiceActor.props(dictionaryService), "dictionary-service")
 
